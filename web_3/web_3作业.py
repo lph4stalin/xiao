@@ -8,13 +8,26 @@
 # 更新 User 类的 validate_login
 # 实现真正的验证
 # 提示, 先读取所有 users, 然后验证用户名和密码是否匹配
+class User():
+    def new(self, form):
+        # form 是个字典
+    self.username = form.get('username', '')
+    self.password = form.get('password', '')
+
+    def validate_login(self):
+        self.user = {
+
+        }
+        self.pass = {
+
+        }
+        reuturn self.user.get()
 
 
 # 作业 3.2
 #
 # 为 request 增加一下 headers 属性, 它是一个字典
 # 保存了 HTTP 请求中的 header 区域的所有内容
-
 
 # 作业 3.3
 #
@@ -50,7 +63,7 @@ us = User.find_all(password='123')
 # 每一个 Model 的 id 是独一无二并且增长的数字
 # save 的时候, 如果 id 属性为 None 就给它赋值并添加/保存
 # 如果 id 属性不为 None 就在所有数据中修改并保存
-# 
+#
 # 用法例子如下
 """
 # 假设有这个用户
@@ -75,4 +88,4 @@ u.save()
 #
 # 该看资料中提及的那本《head first html and css》了
 # 另外请大致阅读下面这篇文章的内容(读读就好 不要求完全掌握)
-http://www.ituring.com.cn/tupubarticle/1204
+http: // www.ituring.com.cn / tupubarticle / 1204

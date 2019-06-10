@@ -5,19 +5,23 @@
 返回 图片
 接收 POST 的信息，根据 query 修改页面内容
 """
+import models
 
 def route(request):
+    # 请求的 route 映射到 response 里要返回的函数
     response = {
     '/' : page,
     '/static/doge.gif' : pic,
     '/static/doge1.jpg' : pic,
     '/static/doge2.gif' : pic,
     '/html_basic': page,
-    '/register': page,
+    '/register': route_login,
     '/login': page,
     }
     r = response.get(request.route, error())
-    p = route_dict[request.route]
+    # 函数的参数
+    p = route_dict.get(request.route, '')
+    print('p', p)
     return r(p)
 
 
@@ -42,7 +46,7 @@ def pic(route):
     """
     例：接收"/static/doge.gif"，返回img
     """
-    path = 'static/' + route
+    path = route
     with open(path, 'rb') as f:
         header = b'HTTP/1.1 200 OK\r\nContent-Type: image/gif\r\n'
         img = header + b'\r\n'+ f.read()
@@ -59,9 +63,9 @@ def error():
 
 route_dict = {
     '/' : 'index.html',
-    '/static/doge.gif' : '/static/doge.gif',
-    '/static/doge1.jpg' : '/static/doge1.jpg',
-    '/static/doge2.gif' : '/static/doge2.gif',
+    '/static/doge.gif' : 'static/doge.gif',
+    '/static/doge1.jpg' : 'static/doge1.jpg',
+    '/static/doge2.gif' : 'static/doge2.gif',
     '/html_basic': 'html_basic.html',
     '/register': 'register.html',
     '/login': 'login.html',
@@ -69,9 +73,11 @@ route_dict = {
 
 
 # login 的函数，传入 POST 的 Body，返回页面
+# 会把原始页面中{{result}}部分替换为自定义内容
 def route_login(request):
     header = headers_of_page()
     if request.method == 'POST':
+        # 把 body 解析成字典
         form = request.form()
         u = User.new(form)
         if u.validate_login():
