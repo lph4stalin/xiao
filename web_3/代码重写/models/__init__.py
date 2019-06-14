@@ -1,3 +1,6 @@
+"""
+__init__.py 在
+"""
 import json
 
 
@@ -32,8 +35,12 @@ def load(path):
         return json.loads(s)
 
 
-# Model 是用于存储数据的基类
 class Model(object):
+    """
+    Model 是用于存储数据的基类
+    db_path 函数接收 class 的名字(比如 Model 或是 Model 的子类)，返回一个模板字符串
+    all 函数
+    """
     # @classmethod 说明这是一个 类方法
     # 类方法的调用方式是  类名.类方法()
     # 可以不实例化直接用类的方法
@@ -45,6 +52,12 @@ class Model(object):
         # 在类名.txt 里面存储了数据(例如，User.txt)
         path = 'db/{}.txt'.format(classname)
         return path
+
+    @classmethod
+    def new(cls, form):
+        # 下面一句相当于 User(form) 或者 Msg(form)
+        m = cls(form)
+        return m
 
     @classmethod
     def all(cls):
@@ -85,8 +98,8 @@ class Model(object):
 
 
 # print(Model.db_path()) → Model.txt
-save({'a': 1, 'b': 2, 'c': 3}, '../db/Model.txt')
-Model.all()
+# save({'a': 1, 'b': 2, 'c': 3}, '../db/Model.txt')
+# Model.all()
 
 
 # 以下两个类用于实际的数据处理
