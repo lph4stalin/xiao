@@ -63,6 +63,8 @@ def response_by_socket(s):
     return r
 
 
+
+
 # 函数4：解析响应，把 response 拆分成 状态码(int)、Headers(字典)、Body(str)
 # 状态码：第 1 个 \r\n 的第 1 个空格的第 2 个。
 # Hearers：第 1 个 \r\n 和第 1 个 \r\n\r\n 之间的内容，还需要转换成字典格式

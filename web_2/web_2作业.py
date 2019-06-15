@@ -7,6 +7,7 @@
 import sys
 sys.path.append("..")
 from urlfunc import *
+import fnmatch2
 
 
 # 定义我们的 log 函数
@@ -74,7 +75,7 @@ def get(url, query={}):
     if status_code == '301':
         return get(headers['Location'])
     return status_code, headers, body
-print(get('http://movie.douban.com/top250'))
+
 
 # 作业 2.3
 #
@@ -127,8 +128,37 @@ https://movie.douban.com/top250
 
 解析方式可以用任意手段，如果你没有想法，用字符串查找匹配比较好(find 特征字符串加切片)
 """
+# 电影名：<span class="title">霸王别姬</span>
+# 分数：<span class="rating_num" property="v:average">9.6</span>
+# 评价人数：<span>1067864人评价</span>
+# 引用语：<span class="inq">风华绝代。</span>
+def spider_1(body):
+    title = []
+    rate = []
+    num = []
+    quotes = []
+    while True:
+        beg_title = body.find('<span class="title">')
+        end_title = body.find('</span>', beg_title)
+        beg_rate = body.find('<span class="rating_num" property="v:average">')
+        end_rate = body.find('</span>', beg_rate)
+        end_num = body.find('人评价')
+        beg_num = body[:end_num].rfind('>')
+        beg_quote = body.find('<span class="inq">')
+        end_quote = body.find('</span>', beg_quote)
+        if beg_title == -1:
+            break
+        title.append(body[beg_title+20:end_title])
+        rate.append(body[beg_rate+46:end_rate])
+        num.append(body[beg_num+1:end_num])
+        quotes.append(body[beg_quote+18:end_quote])
+        body = body[end_quote:]
+    return title, rate, num, quotes
 
 
+
+# status_code, headers, body = get('http://movie.douban.com/top250')
+# spider_1(body)
 # 作业 2.6
 #
 """
@@ -153,3 +183,20 @@ https://movie.douban.com/top250?start=25
 
 解析方式可以用任意手段，如果你没有想法，用字符串查找匹配比较好(find 特征字符串加切片)
 """
+def spider():
+    t = []
+    r = []
+    n = []
+    q = []
+    url = 'http://movie.douban.com/top250'
+    for i in range(0, 250, 25):
+        next_url = url + '?start=' + str(i)
+        status_code, headers, body = get(next_url)
+        title, rate, num, quotes = spider_1(body)
+        t += title
+        r += rate
+        n += num
+        q += quotes
+    return t,r,n,q
+
+spider()
