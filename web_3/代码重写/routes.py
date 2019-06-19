@@ -129,6 +129,3 @@ def route_message(request):
     r = header + '\r\n' + body
     return r.encode(encoding='utf-8')
 
-
-load('db/Model.txt')
-Model.all()

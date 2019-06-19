@@ -78,7 +78,7 @@ def run(host='', port=2000):
         buffer_size = 1025
         # r = b''
         r = connection.recv(buffer_size)
-        print('收到请求', request)
+        print('收到请求', r)
         r = r.decode('utf-8')
 
         # 有时候会收到空请求，这里判断一下防止程序崩溃

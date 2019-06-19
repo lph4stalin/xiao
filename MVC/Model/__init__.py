@@ -18,8 +18,6 @@ def save(data, path):
     # s 是字符串, data 是dict
     s = json.dumps(data, indent=2, ensure_ascii=False)
     with open(path, 'w+', encoding='utf-8') as f:
-        print('save', path, s, data)
-        print(type(s), type(data))
         f.write(s)
 
 
@@ -31,7 +29,6 @@ def load(path):
     """
     with open(path, 'r', encoding='utf-8') as f:
         s = f.read()
-        print('load', s)
         return json.loads(s)
 
 
@@ -50,12 +47,14 @@ class Model(object):
         # 所以我们可以得到 class 的名字
         classname = cls.__name__
         # 在类名.txt 里面存储了数据(例如，User.txt)
-        path = 'db/{}.txt'.format(classname)
+        path = 'Model/db/{}.txt'.format(classname)
         return path
 
     @classmethod
     def new(cls, form):
-        # 下面一句相当于 User(form) 或者 Msg(form)
+        """
+        m 是 cls 的实例, form 是实例化的参数，传入 __init__
+        """
         m = cls(form)
         return m
 
@@ -64,40 +63,41 @@ class Model(object):
         """
         得到一个类的所有存储的实例
         path 是文件地址
-        models 是读取的文件内容
+        models 是读取的文件内容，[{username:, password:},{}]
         ms 是
         """
         path = cls.db_path()
         models = load(path)
-        ms = [cls.new(m) for m in models]
-        print(ms)
-        return ms
+        print('models', models)
+        # ms 是整个 data 里所有数据的 list 形式
+        # ms = [cls.new(m) for m in models]
+        # print('我是ms', ms)
+        return models
 
     def save(self):
         """
         save 函数用于把一个 Model 的实例保存到文件中
         """
         models = self.all()
-        print('models', models)
-        models.append(self)
         # __dict__ 是包含了对象所有属性和值的字典
-        l = [m.__dict__ for m in models]
+        l = self.__dict__
+        print('lllllllll', l)
+        models.append(l)
         path = self.db_path()
-        save(l, path)
+        # 所有擦除，所有重写
+        save(models, path)
 
-    def __repr__(self):
-        """
-        这是一个 魔法函数
-        不明白就看书或者 搜
-        这个函数的目的还是构筑格式化字符串，用于个性化网页
-        """
-        classname = self.__class__.__name__
-        properties = ['{}: ({})'.format(k, v)
-                      for k, v in self.__dict__.items()]
-        s = '\n'.join(properties)
-        print('property', properties)
-        print('s', s)
-        return '< {}\n{} >\n'.format(classname, s)
+    # def __repr__(self):
+    #     """
+    #     这是一个 魔法函数
+    #     不明白就看书或者 搜
+    #     这个函数的目的还是构筑格式化字符串，用于个性化网页
+    #     """
+    #     classname = self.__class__.__name__
+    #     properties = ['{}: {}'.format(k, v)
+    #                   for k, v in self.__dict__.items()]
+    #     s = '\n'.join(properties)
+    #     return '< {}\n{} >\n'.format(classname, s)
 
 
 # print(Model.db_path()) → Model.txt
@@ -111,22 +111,46 @@ class Model(object):
 
 
 class User(Model):
-    def new(self, form):
+    def __init__(self, form):
         # form 是个字典
         self.username = form.get('username', '')
         self.password = form.get('password', '')
 
     def validate_login(self):
-        # 返回值是 True 或者 False
-        return self.username == 'gua' and self.password == '123'
+        """
+        返回值是 True 或者 False
+        传入的 username 和 password 和数据库的一致
+        """
+        for user in User.all():
+            print('user', user)
+            if self.username == user.get('username', '') and self.password == user.get('password', ''):
+                return True
+        return False
 
-    def validate_register(self):
-        # 返回值是 True 或者 False
+
+    def validate_register_1(self):
+        """
+        返回值是 True 或者 False
+        注册条件：1.用户名或者密码长度必须大于2
+        2.不能和现有用户名相同
+        """
         return len(self.username) > 2 and len(self.password) > 2
+
+    def validate_register_2(self):
+        """
+        返回值是 True 或者 False
+        注册条件：1.用户名或者密码长度必须大于2
+        2.不能和现有用户名相同
+        """
+        users = User.all()
+        for user in users:
+            if user.get('username', '') == self.username:
+                return True
+        return False
 
 
 # 定义一个 class 用于保存 message
 class Message(Model):
-    def new(self, form):
+    def __init__(self, form):
         self.author = form.get('author', '')
         self.message = form.get('message', '')
