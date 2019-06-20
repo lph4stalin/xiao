@@ -1,3 +1,4 @@
+
 import socket
 from Controller.request import *
 import Controller.routes
@@ -30,10 +31,8 @@ def response(request):
     x = Controller.routes.route_dict_par.get(request.route, 'error')
     print(x)
     if x!= 'error':
-        print('2/1')
         response = Controller.routes.route(request)
     else:
-        print('2/2')
         response = Controller.routes.error(request)
     return response
 
@@ -46,7 +45,6 @@ def run(host='', port=2000):
     """
     s = socket.socket()
     s.bind((host, port))
-    print('first')
 
     while True:
         # 监听
@@ -56,7 +54,7 @@ def run(host='', port=2000):
 
         r = recv_all(connection, 1025)
         r = r.decode('utf-8')
-        print('second')
+
 
         # 有时候会收到空请求，这里判断一下防止程序崩溃
         if len(r.split()) < 2:
@@ -65,17 +63,16 @@ def run(host='', port=2000):
         # 解析请求，得到 method、path、body、query
         request = Request()
         request.parsed_request(r)
-        print('third')
+        request.parsed_cookie(r)
 
         # 构造 response
         re = response(request)
-        print('forth')
+        print('返回的响应', re)
 
         # 发送响应报文
         connection.sendall(re)
         # 关闭连接
         connection.close()
-        print('fifth')
 
 
 def main():

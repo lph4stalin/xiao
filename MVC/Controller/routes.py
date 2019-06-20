@@ -36,7 +36,7 @@ def headers_of_page():
     """
     标准的 page 的 Header
     """
-    header = 'HTTP/1.1 210 VERY OK\r\nContent-Type: text/html\r\n'
+    header = 'HTTP/1.1 210 VERY OK\r\nContent-Type: text/html\r\nSet-Cookie: status=Not Login\r\n'
     return header
 
 
@@ -68,6 +68,16 @@ def error(request):
     """
     response = b'HTTP/1.1 404 Error\r\n\r\n<h1>404 Not Found</h1>'
     return response
+
+def redirect(location):
+    """
+    重定向的response
+    传入重定向的 location
+    """
+    response = b'HTTP/1.1 302 Temporarily Moved Location: {}\r\n\r\n'.format(location)
+    # response =
+    return response
+
 # ——————————————————————————————————————————————————
 
 
@@ -77,22 +87,26 @@ def route_login(request):
     会把原始页面中{{result}}部分替换为自定义内容
     """
     if request.method == 'POST':
-        # 把 body 解析成字典
         form = request.form()
+        # 把 body 解析成字典
         u = User(form)
         if u.validate_login():
             result = '登录成功'
+            cookie = 'Set-Cookie: status=Login;username={}'.format(form.get('username', ''))
         else:
             result = '用户名或者密码错误'
+            cookie = 'Set-Cookie: status=Not Login'
     else:
         result = ''
+        cookie = 'Set-Cookie: status=Not Login'
+    print('这是cookie', cookie)
     r = page(request).decode(encoding='utf-8')
     r = r.replace('{{result}}', result)
+    r = r.replace('Set-Cookie: status=Not Login', cookie)
     return r.encode(encoding='utf-8')
 
 
 def route_register(request):
-    print('3.2')
     if request.method == 'POST':
         # HTTP BODY 如下
         # username=gw123&password=123
@@ -102,15 +116,12 @@ def route_register(request):
         if not u.validate_register_1():
             result = '用户名或者密码长度必须大于2'
         elif u.validate_register_2():
-            print('daolu2')
             result = '用户名已存在'
         else:
-            print('daolu3')
             u.save()
             result = '注册成功<br> <pre>{}</pre>'.format(form)
     else:
         result = ''
-    print('3.3')
     r = page(request).decode(encoding='utf-8')
     r = r.replace('{{result}}', result)
     return r.encode(encoding='utf-8')
@@ -129,6 +140,21 @@ def route_messages(request):
     msgs = '<br>'.join([str(m) for m in messages_list])
     r = r.replace('{{messagess}}', msgs)
     return r.encode(encoding='utf-8')
+
+
+def route_profile(request):
+    """
+    检查 cookie，如果登录了，则返回username，password 和 note
+    如果没有登录，则返回 302 重定向
+    """
+    if request.cookie == 'status=Not Login':
+        redirect('localhost:2000/login')
+    else:
+        db = 
+        result = parsed_request
+        r = page(request).decode(encoding='utf-8')
+        r.replace('{{result}}', result)
+    return r.encode(encoding='utf-8')
 # ——————————————————————————————————————————————————
 
 
@@ -141,6 +167,7 @@ route_dict_func = {
     '/messages': route_messages,
     '/register': route_register,
     '/login': route_login,
+    '/profile': route_profile,
 }
 
 
@@ -153,6 +180,7 @@ route_dict_par = {
     '/messages': 'messages.html',
     '/register': 'register.html',
     '/login': 'login.html',
+    '/profile': 'profile.html',
 }
 
 # a = User.all()

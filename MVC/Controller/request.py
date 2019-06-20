@@ -14,6 +14,7 @@ class Request(object):
         self.path = ''
         self.query = {}
         self.body = ''
+        self.cookie = ''
 
     def form(self):
         """
@@ -41,3 +42,26 @@ class Request(object):
         else:
             self.route = self.path
             self.query = ''
+
+
+    # 解析 header
+    def parsed_header(self, request):
+        self.header, self.body = request.split('\r\n\r\n', 1)
+        self.header_2 = self.header.split('\r\n', 1)[1]
+        self.header_list = self.header_2.split('\r\n')
+        self.header_dict = {}
+        print('1', self.header_list)
+        for i in self.header_list:
+            k, v = i.split(': ')
+            self.header_dict[k] = v
+        print('headers', self.header_dict)
+        return self.header_dict
+
+
+
+    # 解析 cookie
+    def parsed_cookie(self, request):
+        self.headers = self.parsed_header(request)
+        print(self.headers)
+        self.cookie = self.headers.get('Cookie', '')
+        print('cookie', self.cookie)
