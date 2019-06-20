@@ -82,8 +82,10 @@ class Model(object):
         当没有 __str__ 的时候
         就调用 __repr__
         """
+        # 当前实例的类，以及类名
         classname = self.__class__.__name__
-        properties = ['{}: ({})'.format(k, v) for k, v in self.__dict__.items()]
+        properties = ['{}: ({})'.format(k, v)
+                      for k, v in self.__dict__.items()]
         s = '\n'.join(properties)
         return '< {}\n{} >\n'.format(classname, s)
 

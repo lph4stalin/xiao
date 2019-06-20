@@ -17,7 +17,12 @@
 # 做法如下
 # 1, 在 注册 页面添加一个新的 input 让用户输入 note
 # 2, 在 User 类的初始化中添加一个新的属性 note 并且用 form 里的元素赋值
-
+# class User(Model):
+#     def __init__(self, form):
+#         self.username = form.get('username', '')
+#         self.password = form.get('password', '')
+#         self.note = form.get('note', '')
+# 直接在 MVC 代码里改动
 
 # 作业 4.2
 #
