@@ -92,19 +92,19 @@ class Model(object):
         path = self.db_path()
         save(l, path)
 
-    def __repr__(self):
-        """
-        这是一个 魔法函数
-        不明白就看书或者 搜
-        这个函数的目的还是构筑格式化字符串，用于个性化网页
-        """
-        classname = self.__class__.__name__
-        properties = ['{}: ({})'.format(k, v)
-                      for k, v in self.__dict__.items()]
-        s = '\n'.join(properties)
-        print('property', properties)
-        print('s', s)
-        return '< {}\n{} >\n'.format(classname, s)
+    # def __repr__(self):
+    #     """
+    #     这是一个 魔法函数
+    #     不明白就看书或者 搜
+    #     这个函数的目的还是构筑格式化字符串，用于个性化网页
+    #     """
+    #     classname = self.__class__.__name__
+    #     properties = ['{}: ({})'.format(k, v)
+    #                   for k, v in self.__dict__.items()]
+    #     s = '\n'.join(properties)
+    #     print('property', properties)
+    #     print('s', s)
+    #     return '< {}\n{} >\n'.format(classname, s)
 
 
 # print(Model.db_path()) → Model.txt
