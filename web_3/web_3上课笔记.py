@@ -3,6 +3,12 @@
 提问之前要把思路整理好，并给出问题的必要条件。
 目标：提出一个帮你解决问题的问题。
 
+一、url
+route: /search?a=b&c=d#anchor
+path: /search
+query: ?a=b&c=d
+anchor: #anchor
+
 
 二、代码解析
 1.服务器运行的主程序：监听 → 接收请求 → 解析请求 → 生成响应报文 → 发送响应报文 → 关闭连接
@@ -25,7 +31,11 @@ C 沟通 M 和 V
 四、代码重写
 功能：①能够根据地址返回 html_basic、index、login、register四个网页
 ②对 login 和 register，接收到的对话框中的内容，要能够进行验证（收到→解析→验证→返回）
-③
+
+代码：① server 是服务器运行的模块
+② routes 是网页地址和响应函数的映射
+③ db 是服务器存储数据的文件夹
+④ models是服务器存储响应函数的模块
 
 
 五、package

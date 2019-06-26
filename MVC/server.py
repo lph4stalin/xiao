@@ -27,9 +27,7 @@ def response(request):
     根据不同的情形返回响应报文
     如果能够查询到路径，则返回请求，否则返回 error
     """
-    print('3.0')
     x = Controller.routes.route_dict_par.get(request.route, 'error')
-    print(x)
     if x!= 'error':
         response = Controller.routes.route(request)
     else:
@@ -54,6 +52,7 @@ def run(host='', port=2000):
 
         r = recv_all(connection, 1025)
         r = r.decode('utf-8')
+        print('接受的请求', r)
 
 
         # 有时候会收到空请求，这里判断一下防止程序崩溃
@@ -64,6 +63,8 @@ def run(host='', port=2000):
         request = Request()
         request.parsed_request(r)
         request.parsed_cookie(r)
+        print('解析的请求', request.method, request.path, request.body, request.query, request.cookie)
+
 
         # 构造 response
         re = response(request)

@@ -1,8 +1,9 @@
+import routes
 import socket
 import sys
+import urllib
 sys.path.append("..")
-import routes
-#accept函数和recv函数都是阻塞式的。也就是说，他们一直在等待，直到有客户端连接过来或者是后者的有数据可以接收。
+# accept函数和recv函数都是阻塞式的。也就是说，他们一直在等待，直到有客户端连接过来或者是后者的有数据可以接收。
 
 """
 函数1：解析 request，返回 method、route、query、body
@@ -11,31 +12,50 @@ import routes
 """
 
 # 定义一个 request 类，里面保存了所有的请求信息
+
+
 class Request(object):
-    def __init__(self):
-        self.method = 'GET'
-        self.path = ''
-        self.query = {}
-        self.body = ''
+    def __init__(self, r):
+        self.raw_data = r
+        # 只能 split 一次，因为 body 中可能有换行
+        # 把 body 放入 request 中
+        header, self.body = r.split('\r\n\r\n', 1)
+        h = header.split('\r\n')
+        parts = h[0].split()
+        self.path = parts[1]
+        # 设置 request 的 method
+        self.method = parts[0]
+
+        self.path, self.query = parsed_path(self.path)
 
     def form(self):
         """
         form 函数用于把 body 解析为一个字典并返回
         body 的格式如下 a=b&c=d&e=1
+        返回的结果格式如下 {'a': b, 'c': d,'e': 1}
         """
         # username=g+u%26a%3F&password=
         # username=g u&a?&password=
         # TODO, 这实际上算是一个 bug，应该在解析出数据后再去 unquote
-        body = urllib.parse.unquote(self.body)
-        args = body.split('&')
+        args = self.body.split('&')
         f = {}
         for arg in args:
+            arg = urllib.parse.unquote(arg)
             k, v = arg.split('=')
             f[k] = v
         return f
 
 
-request = Request()
+def request_from_connection(connection):
+    request = b''
+    buffer_size = 1024
+    while True:
+        r = connection.recv(buffer_size)
+        request += r
+        # 取到的数据长度不够 buffer_size 的时候，说明数据已经取完了。
+        if len(r) < buffer_size:
+            request = request.decode()
+            return request
 
 
 # 解析 request
@@ -75,6 +95,9 @@ def run(host='', port=2000):
         connection, address = s.accept()
 
         # 接收请求
+        with connection:
+            r = request_from_connection(connection)
+
         buffer_size = 1025
         # r = b''
         r = connection.recv(buffer_size)
@@ -82,8 +105,8 @@ def run(host='', port=2000):
         r = r.decode('utf-8')
 
         # 有时候会收到空请求，这里判断一下防止程序崩溃
-        if len(r.split()) < 2:
-                continue
+        if len(r) > 0:
+            request = Request(r)
 
         # 不知道为什么，使用无限循环接收 request 会卡死
         # while True:
@@ -98,17 +121,15 @@ def run(host='', port=2000):
         #         break
 
         # 解析请求，得到 method、path、body、query
-        request.method, request.route, request.query, request.body = parsed_request(r)
+        request.method, request.route, request.query, request.body = parsed_request(
+            r)
         print('解析请求')
-        print('method', request.method, 'route', request.route, 'query', request.query, 'body', request.body)
+        print('method', request.method, 'route', request.route,
+              'query', request.query, 'body', request.body)
 
         # 构造 response
-        if routes.route(request):
-            response = routes.route(request)
-            print('返回页面')
-        else:
-            response = routes.error()
-            print('返回错误')
+        response = routes.route(request)
+        print('返回页面')
         connection.sendall(response)
         connection.close()
 

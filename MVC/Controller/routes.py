@@ -17,7 +17,6 @@ def route(request):
     """
     # 请求的 route 映射到 response 里要返回的函数
     f = route_dict_func.get(request.route, error)
-    print('3.1')
     return f(request)
 
 
@@ -74,8 +73,9 @@ def redirect(location):
     重定向的response
     传入重定向的 location
     """
-    response = b'HTTP/1.1 302 Temporarily Moved Location: {}\r\n\r\n'.format(location)
-    # response =
+    # bytes 不能用 format
+    response = 'HTTP/1.1 302 Temporarily Moved\r\nLocation: {}\r\n\r\n'.format(location)
+    response = response.encode(encoding='utf-8')
     return response
 
 # ——————————————————————————————————————————————————
@@ -92,14 +92,13 @@ def route_login(request):
         u = User(form)
         if u.validate_login():
             result = '登录成功'
-            cookie = 'Set-Cookie: status=Login;username={}'.format(form.get('username', ''))
+            cookie = 'Set-Cookie: status=Login, username={}'.format(form.get('username', ''))
         else:
             result = '用户名或者密码错误'
             cookie = 'Set-Cookie: status=Not Login'
     else:
         result = ''
         cookie = 'Set-Cookie: status=Not Login'
-    print('这是cookie', cookie)
     r = page(request).decode(encoding='utf-8')
     r = r.replace('{{result}}', result)
     r = r.replace('Set-Cookie: status=Not Login', cookie)
@@ -148,13 +147,22 @@ def route_profile(request):
     如果没有登录，则返回 302 重定向
     """
     if request.cookie == 'status=Not Login':
-        redirect('localhost:2000/login')
+        return redirect('http://localhost:2000/login')
     else:
-        db = 
-        result = parsed_request
-        r = page(request).decode(encoding='utf-8')
-        r.replace('{{result}}', result)
-    return r.encode(encoding='utf-8')
+        path = User.db_path()
+        users = load(path)
+        username = request.cookie.split('username=')[1]
+
+        for user in users:
+            if user['username'] == username:
+                password = user['password']
+                note = user.get('note', '')
+                result = 'username:{}<br>password:{}<br>note:{}'.format(username, password, note)
+                r = page(request).decode(encoding='utf-8')
+                r = r.replace('{{result}}', result)
+                return r.encode(encoding='utf-8')
+        return redirect('http://localhost:2000/login')
+
 # ——————————————————————————————————————————————————
 
 

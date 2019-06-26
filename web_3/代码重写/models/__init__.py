@@ -18,8 +18,8 @@ def save(data, path):
     # s 是字符串, data 是dict
     s = json.dumps(data, indent=2, ensure_ascii=False)
     with open(path, 'w+', encoding='utf-8') as f:
-        print('save', path, s, data)
-        print(type(s), type(data))
+        # print('save', path, s, data)
+        # print(type(s), type(data))
         f.write(s)
 
 
@@ -31,7 +31,9 @@ def load(path):
     """
     with open(path, 'r', encoding='utf-8') as f:
         s = f.read()
-        print('load', s)
+        # print('load', s, type(s))
+        # print(json.loads(s))
+        # 这里要注意读取的文件里面是否有内容，如果没有会报错
         return json.loads(s)
 
 
@@ -39,7 +41,10 @@ class Model(object):
     """
     Model 是用于存储数据的基类
     db_path 函数接收 class 的名字(比如 Model 或是 Model 的子类)，返回一个模板字符串
+    new 函数
     all 函数
+    save 函数
+    __repr__ 函数
     """
     # @classmethod 说明这是一个 类方法
     # 类方法的调用方式是  类名.类方法()
@@ -55,7 +60,9 @@ class Model(object):
 
     @classmethod
     def new(cls, form):
+        # form 是一个字典
         # 下面一句相当于 User(form) 或者 Msg(form)
+        # 也就是初始化类，这时 User 类里 self.username 和 self.password 就被赋值了
         m = cls(form)
         return m
 
@@ -70,7 +77,7 @@ class Model(object):
         path = cls.db_path()
         models = load(path)
         ms = [cls.new(m) for m in models]
-        print(ms)
+        print('ms', ms)
         return ms
 
     def save(self):
@@ -85,19 +92,19 @@ class Model(object):
         path = self.db_path()
         save(l, path)
 
-    def __repr__(self):
-        """
-        这是一个 魔法函数
-        不明白就看书或者 搜
-        这个函数的目的还是构筑格式化字符串，用于个性化网页
-        """
-        classname = self.__class__.__name__
-        properties = ['{}: ({})'.format(k, v)
-                      for k, v in self.__dict__.items()]
-        s = '\n'.join(properties)
-        print('property', properties)
-        print('s', s)
-        return '< {}\n{} >\n'.format(classname, s)
+    # def __repr__(self):
+    #     """
+    #     这是一个 魔法函数
+    #     不明白就看书或者 搜
+    #     这个函数的目的还是构筑格式化字符串，用于个性化网页
+    #     """
+    #     classname = self.__class__.__name__
+    #     properties = ['{}: ({})'.format(k, v)
+    #                   for k, v in self.__dict__.items()]
+    #     s = '\n'.join(properties)
+    #     print('property', properties)
+    #     print('s', s)
+    #     return '< {}\n{} >\n'.format(classname, s)
 
 
 # print(Model.db_path()) → Model.txt
