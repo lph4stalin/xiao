@@ -31,11 +31,11 @@ def templates(request):
         return f.read()
 
 
-def headers_of_page():
+def headers_of_page(request):
     """
     标准的 page 的 Header
     """
-    header = 'HTTP/1.1 210 VERY OK\r\nContent-Type: text/html\r\nSet-Cookie: status=Not Login\r\n'
+    header = 'HTTP/1.1 210 VERY OK\r\nContent-Type: text/html\r\nSet-Cookie: {}\r\n'.format(request.cookie)
     return header
 
 
@@ -43,7 +43,7 @@ def page(request):
     """
     没有交互的网页的 response
     """
-    header = headers_of_page()
+    header = headers_of_page(request)
     body = templates(request)
     r = header + '\r\n' + body
     return r.encode(encoding='utf-8')
@@ -176,7 +176,21 @@ def route_todo(request):
     if check_login(request):
         return redirect('http://localhost:2000/login')
     else:
+        print('abcosjk', User.all())
+        todos_list = Todo.all()
+        print(todos_list)
+        t_list = []
+        for t in todos_list:
+            print('1', t.get('username', ''))
+            print('2', request.cookie.split('username=')[1])
+            if t.get('username', '') == request.cookie.split('username=')[1]:
+                todo = '{}: {}'.format(t.get('id', ''), t.get('title', ''))
+                t_list.append(todo)
+                print(t_list)
+        todos = '<br>'.join(t_list)
+        print('todos', todos)
         r = page(request).decode(encoding='utf-8')
+        r = r.replace('{{todos}}', todos)
         return r.encode(encoding='utf-8')
 
 
@@ -186,8 +200,14 @@ def route_todo_add(request):
     :param request:
     :return:
     """
-
-
+    todo_list = Todo.all()
+    print('todo_list', todo_list)
+    form = request.form
+    todo = Todo(form, request.cookie)
+    print('todo', todo)
+    todo_list.append(todo)
+    todo.save()
+    return redirect('http://localhost:2000/todo_index')
 # ——————————————————————————————————————————————————
 
 

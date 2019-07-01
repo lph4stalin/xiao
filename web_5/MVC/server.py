@@ -2,6 +2,7 @@
 import socket
 from Controller.request import *
 import Controller.routes
+import urllib
 # accept函数和recv函数都是阻塞式的。也就是说，他们一直在等待，直到有客户端连接过来或者是后者的有数据可以接收。
 
 
@@ -52,7 +53,7 @@ def run(host='', port=2000):
 
         r = recv_all(connection, 1025)
         r = r.decode('utf-8')
-        print('接受的请求', r)
+        print('接受的请求', urllib.parse.unquote(r))
 
 
         # 有时候会收到空请求，这里判断一下防止程序崩溃

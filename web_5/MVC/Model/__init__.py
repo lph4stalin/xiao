@@ -159,7 +159,7 @@ class Message(Model):
 
 # 定义一个 class 用于保存 todo
 class Todo(Model):
-    def __init__(self, form):
-        self.username = form.get('username', '')
+    def __init__(self, form, cookie):
+        self.username = cookie.split('username=')[1]
         self.title = form.get('title', '')
         self.id = 0
