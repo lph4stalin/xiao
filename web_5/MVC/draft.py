@@ -1,4 +1,6 @@
-path = 'Model/db/Todo.txt'
-with open(path, 'r', encoding='utf-8') as f:
-    s = f.read()
-    print(s)
+import logging
+
+s = '0'
+n = int(s)
+logging.info('n = {}'.format(n))
+print(10 / n)

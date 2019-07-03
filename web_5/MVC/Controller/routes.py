@@ -36,6 +36,7 @@ def headers_of_page(request):
     标准的 page 的 Header
     """
     header = 'HTTP/1.1 210 VERY OK\r\nContent-Type: text/html\r\nSet-Cookie: {}\r\n'.format(request.cookie)
+    print('cookie', request.cookie)
     return header
 
 
@@ -80,7 +81,8 @@ def redirect(location):
 
 
 def check_login(request):
-     return request.cookie == 'status=Not Login'
+    print('request.cookie2', request.cookie)
+    return request.cookie == 'status=Not Login'
 # ——————————————————————————————————————————————————
 
 
@@ -89,22 +91,21 @@ def route_login(request):
     login 的函数，传入 POST 的 Body，返回页面
     会把原始页面中{{result}}部分替换为自定义内容
     """
+    r = page(request).decode(encoding='utf-8')
     if request.method == 'POST':
         form = request.form()
         # 把 body 解析成字典
         u = User(form)
+
         if u.validate_login():
             result = '登录成功'
             cookie = 'Set-Cookie: status=Login, username={}'.format(form.get('username', ''))
+            r = r.replace('Set-Cookie: status=Not Login', cookie)
         else:
             result = '用户名或者密码错误'
-            cookie = 'Set-Cookie: status=Not Login'
     else:
         result = ''
-        cookie = 'Set-Cookie: status=Not Login'
-    r = page(request).decode(encoding='utf-8')
     r = r.replace('{{result}}', result)
-    r = r.replace('Set-Cookie: status=Not Login', cookie)
     return r.encode(encoding='utf-8')
 
 
@@ -173,17 +174,14 @@ def route_todo(request):
     :param request:
     :return: 响应报文
     """
+    print('检查登录', check_login(request))
     if check_login(request):
         return redirect('http://localhost:2000/login')
     else:
-        print('abcosjk', User.all())
         todos_list = Todo.all()
-        print(todos_list)
         t_list = []
         for t in todos_list:
-            print('1', t.get('username', ''))
-            print('2', request.cookie.split('username=')[1])
-            if t.get('username', '') == request.cookie.split('username=')[1]:
+            if t.get('username', '') == request.username:
                 todo = '{}: {}'.format(t.get('id', ''), t.get('title', ''))
                 t_list.append(todo)
                 print(t_list)
@@ -239,5 +237,3 @@ route_dict_par = {
     '/todo_index': 'todo_index.html',
     '/todo/add': '',
 }
-
-

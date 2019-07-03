@@ -15,6 +15,7 @@ class Request(object):
         self.query = {}
         self.body = ''
         self.cookie = ''
+        self.username = ''
 
     def form(self):
         """
@@ -50,7 +51,9 @@ class Request(object):
         self.header_2 = self.header.split('\r\n', 1)[1]
         self.header_list = self.header_2.split('\r\n')
         self.header_dict = {}
+        print(self.header_list)
         for i in self.header_list:
+            print('i', i)
             k, v = i.split(': ')
             self.header_dict[k] = v
         return self.header_dict
@@ -60,4 +63,9 @@ class Request(object):
     # 解析 cookie
     def parsed_cookie(self, request):
         self.headers = self.parsed_header(request)
-        self.cookie = self.headers.get('Cookie', '')
+        self.cookie = self.headers.get('Cookie', 'status=Not Login')
+        print('self.cookie', self.cookie)
+        if 'username' in self.cookie:
+            self.username = self.cookie.split('username=')[1]
+
+

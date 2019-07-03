@@ -64,7 +64,7 @@ def run(host='', port=2000):
         request = Request()
         request.parsed_request(r)
         request.parsed_cookie(r)
-        print('解析的请求', request.method, request.path, request.body, request.query, request.cookie)
+        print('解析的请求', request.method, request.path, request.body, request.query, request.cookie, request.username)
 
 
         # 构造 response
