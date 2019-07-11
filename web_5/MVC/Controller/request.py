@@ -51,9 +51,7 @@ class Request(object):
         self.header_2 = self.header.split('\r\n', 1)[1]
         self.header_list = self.header_2.split('\r\n')
         self.header_dict = {}
-        print(self.header_list)
         for i in self.header_list:
-            print('i', i)
             k, v = i.split(': ')
             self.header_dict[k] = v
         return self.header_dict

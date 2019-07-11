@@ -1,4 +1,3 @@
-
 import socket
 from Controller.request import *
 import Controller.routes
@@ -26,7 +25,7 @@ def response(request):
     输入：request
     返回：response
     根据不同的情形返回响应报文
-    如果能够查询到路径，则返回请求，否则返回 error
+    如果能够查询到路径，则返回路径对应的报文，否则返回 error
     """
     x = Controller.routes.route_dict_par.get(request.route, 'error')
     if x!= 'error':

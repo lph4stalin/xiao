@@ -26,7 +26,7 @@ def templates(request):
     """
     response 的组件函数，返回被 open 的网页内容，作为 response 的 body
     """
-    path = 'View/' + route_dict_par.get(request.route, '')
+    path = 'View/templates/' + route_dict_par.get(request.route, '')
     with open(path, 'r', encoding='utf-8') as f:
         return f.read()
 
@@ -81,7 +81,10 @@ def redirect(location):
 
 
 def check_login(request):
-    print('request.cookie2', request.cookie)
+    """
+    :param request 请求信息
+    :return: True 未登录；False 登录
+    """
     return request.cookie == 'status=Not Login'
 # ——————————————————————————————————————————————————
 
@@ -184,9 +187,7 @@ def route_todo(request):
             if t.get('username', '') == request.username:
                 todo = '{}: {}'.format(t.get('id', ''), t.get('title', ''))
                 t_list.append(todo)
-                print(t_list)
         todos = '<br>'.join(t_list)
-        print('todos', todos)
         r = page(request).decode(encoding='utf-8')
         r = r.replace('{{todos}}', todos)
         return r.encode(encoding='utf-8')
@@ -199,10 +200,17 @@ def route_todo_add(request):
     :return:
     """
     todo_list = Todo.all()
-    print('todo_list', todo_list)
-    form = request.form
+    print('Todo_list',todo_list)
+    form = request.form()
     todo = Todo(form, request.cookie)
     print('todo', todo)
+    this_user_todos = []
+    for i in todo_list:
+        print('hahah', i)
+        if i['username'] == request.username:
+            this_user_todos.append(i)
+    print(todo.id)
+    todo.id = len(this_user_todos) + 1
     todo_list.append(todo)
     todo.save()
     return redirect('http://localhost:2000/todo_index')
