@@ -15,6 +15,7 @@ class Request(object):
         self.query = {}
         self.body = ''
         self.cookie = ''
+        self.username = ''
 
     def form(self):
         """
@@ -60,4 +61,9 @@ class Request(object):
     # 解析 cookie
     def parsed_cookie(self, request):
         self.headers = self.parsed_header(request)
-        self.cookie = self.headers.get('Cookie', '')
+        self.cookie = self.headers.get('Cookie', 'status=Not Login')
+        print('self.cookie', self.cookie)
+        if 'username' in self.cookie:
+            self.username = self.cookie.split('username=')[1]
+
+

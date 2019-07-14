@@ -68,8 +68,6 @@ class Model(object):
         """
         path = cls.db_path()
         models = load(path)
-        print(type(models))
-        print('models', models)
         # ms 是整个 data 里所有数据的 list 形式
         # ms = [cls.new(m) for m in models]
         # print('我是ms', ms)
@@ -82,7 +80,6 @@ class Model(object):
         models = self.all()
         # __dict__ 是包含了对象所有属性和值的字典
         l = self.__dict__
-        print('lllllllll', l)
         models.append(l)
         path = self.db_path()
         # 所有擦除，所有重写
@@ -124,11 +121,9 @@ class User(Model):
         传入的 username 和 password 和数据库的一致
         """
         for user in User.all():
-            print('user', user)
             if self.username == user.get('username', '') and self.password == user.get('password', ''):
                 return True
         return False
-
 
     def validate_register_1(self):
         """
@@ -163,4 +158,4 @@ class Todo(Model):
     def __init__(self, form, cookie):
         self.username = cookie.split('username=')[1]
         self.title = form.get('title', '')
-        self.id = 0
+        self.id = 1
