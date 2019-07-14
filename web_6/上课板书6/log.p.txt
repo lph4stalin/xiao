@@ -1,0 +1,41 @@
+记录 log 出的内容
+
+20:15:41 测试
+20:16:31 测试
+09:22:04 path,  /Users/lipeihua/Python/xiao/web_6/上课板书6/templates/
+09:22:26 path,  /Users/lipeihua/Python/xiao/web_6/上课板书6/templates/
+09:22:26 <!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>jinja demo 1</title>
+</head>
+<body>
+    <!-- 变量替换 -->
+    <h1>gua</h1>
+
+    <!-- 循环 -->
+    
+        <span class="number">0</span>
+    
+        <span class="number">1</span>
+    
+        <span class="number">2</span>
+    
+
+    <!-- 循环加对象/字典访问 -->
+    <div class="user-container">
+    
+        <div class="user-cell">
+            <span>gua</span>
+            <span>1</span>
+        </div>
+    
+        <div class="user-cell">
+            <span>瓜</span>
+            <span>2</span>
+        </div>
+    
+    </div>
+</body>
+</html>

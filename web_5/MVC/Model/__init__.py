@@ -68,6 +68,7 @@ class Model(object):
         """
         path = cls.db_path()
         models = load(path)
+        print(type(models))
         print('models', models)
         # ms 是整个 data 里所有数据的 list 形式
         # ms = [cls.new(m) for m in models]
