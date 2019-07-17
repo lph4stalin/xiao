@@ -114,7 +114,6 @@ class User(Model):
         self.username = form.get('username', '')
         self.password = form.get('password', '')
         self.note = form.get('note', '')
-        self.from_url = ''
 
     def validate_login(self):
         """

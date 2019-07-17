@@ -1,0 +1,31 @@
+Model 数据层（核心功能）
+View 视图层（可见的网页）
+Control 控制层 （用户通过视图层输入的信息，转换成对网页的操作）
+
+对一个网站来说，View 是它的网页
+Model 是将客户端发送的数据经处理后进行各种用途：比如用户输入用户名、密码，服务器进行校验
+Control 是维持客户端和服务器通信、解析发送的数据
+
+框架：
+Model：__init__.py 处理服务器
+Control：__init__.py 处理
+View：网页
+
+
+request b'GET / HTTP/1.1\r\nHost: localhost:2000\r\nConnection: keep-alive\r\nCache-Control: max-age=0\r\nUpgrade-Insecure-Requests: 1\r\nUser-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.90 Safari/537.36\r\nAccept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3\r\nAccept-Encoding: gzip, deflate, br\r\nAccept-Language: zh-CN,zh;q=0.9\r\n\r\n'
+
+response b'HTTP/1.1 200 OK\r\n\r\n<h1>Hello World!</h1>'
+
+新增功能：添加 todo，修改 todo，删除 todo
+
+添加：一个网页，刷新时读取当前数据库中所有 todo；如果要添加新 todo，那么就在“添加”按钮被点击的时候，更新 todo 数据库，并刷新页面
+
+修改：一个网页，点进去之后可以修改 todo，会更新数据库，并返回 todo 主页面
+
+删除：直接从数据库中删除 todo，并刷新页面
+
+数据库中 todo 所需字段：username - 表明当前 todo 属于哪个用户；id - todo 的唯一标识；title - todo 的内容
+————————————————————————————————————————
+第一层级
+
+一个 WSGI 接口：接收 request 信息，和
