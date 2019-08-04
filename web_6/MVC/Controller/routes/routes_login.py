@@ -2,7 +2,7 @@ from Model import *
 from .utils import *
 import sys
 sys.path.append('../')
-import session
+import Controller.session
 
 def route_login(request):
     """
@@ -11,16 +11,22 @@ def route_login(request):
     """
     r = page(request).decode(encoding='utf-8')
     if request.method == 'POST':
-        form = request.form()
-        # 把 body 解析成字典
+         # 把 body 解析成字典
+        form = request.form(request.body)
+        # 生成 User 类的一个实例
         u = User(form)
         if u.validate_login():
             result = '登录成功'
-            cookie = 'Set-Cookie: status=Login, username={}'.format(form.get('username', ''))
+            session = Controller.session.make_session(20)
+            u.session = session
+            print('我是当前的session', u.username, u.session)
+            cookie = 'Set-Cookie: status=Login, session={}'.format(session)
             r = r.replace('Set-Cookie: status=Not Login', cookie)
+            username = current_user(request)
         else:
             result = '用户名或者密码错误'
     else:
         result = ''
     r = r.replace('{{result}}', result)
+    r = r.replace('{{username}}', username)
     return r.encode(encoding='utf-8')

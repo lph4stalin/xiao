@@ -16,7 +16,6 @@ def headers_of_page(request):
     标准的 page 的 Header
     """
     header = 'HTTP/1.1 210 VERY OK\r\nContent-Type: text/html\r\nSet-Cookie: {}\r\n'.format(request.cookie)
-    print('cookie', request.cookie)
     return header
 
 
@@ -67,6 +66,11 @@ def check_login(request):
     """
     return request.cookie == 'status=Not Login'
 
+
+def current_user(request):
+    cookie = Cookie()
+    username = request.session.get('username', '游客')
+    return username
 
 # 每个路径对应的参数
 route_dict_par = {

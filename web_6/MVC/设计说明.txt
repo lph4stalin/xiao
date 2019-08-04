@@ -5,27 +5,39 @@ Control 控制层 （用户通过视图层输入的信息，转换成对网页�
 对一个网站来说，View 是它的网页
 Model 是将客户端发送的数据经处理后进行各种用途：比如用户输入用户名、密码，服务器进行校验
 Control 是维持客户端和服务器通信、解析发送的数据
+————————————————————————————————————————————————————————
+对 Control 来说，做的就是把传送数据，整理数据格式
+对 Model 来说，做的就是对数据库增删改查，把结果返回给 Control
+对 View 来说，做的就是把数据显示出来（或者说是对模板 HTML 文件进行修改）
+————————————————————————————————————————————————————————
+一个一个页面的来
+Control 部分
+把 request 解析为 Method、Header、Body、Cookie等
 
-框架：
-Model：__init__.py 处理服务器
-Control：__init__.py 处理
-View：网页
+Model 部分
+对 request 过来的数据进行增删改查
+
+对于各个网页的功能：
+index.html: 接收一般请求，返回网页、图片
+login.html:
+增：生成一个 session 保存在 db 中
+删：
+改：
+查：读取 db 的 username、password；check username 和 password
+将 session 作为 cookie 字段返回
+通过 session 去获取 username？session 的来源：request；username 的来源：
 
 
-request b'GET / HTTP/1.1\r\nHost: localhost:2000\r\nConnection: keep-alive\r\nCache-Control: max-age=0\r\nUpgrade-Insecure-Requests: 1\r\nUser-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.90 Safari/537.36\r\nAccept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3\r\nAccept-Encoding: gzip, deflate, br\r\nAccept-Language: zh-CN,zh;q=0.9\r\n\r\n'
+messages.html: 接收输入框中的 message（暂时不做这个功能）
 
-response b'HTTP/1.1 200 OK\r\n\r\n<h1>Hello World!</h1>'
+profile.html:
+接收：一般请求，检查 cookie
+返回：对 session 进行 check，如果 True 返回当前用户信息；如果 False，重定向到登录页面
 
-新增功能：添加 todo，修改 todo，删除 todo
+register.html: 接收一般请求，和输入框中的 username、password
 
-添加：一个网页，刷新时读取当前数据库中所有 todo；如果要添加新 todo，那么就在“添加”按钮被点击的时候，更新 todo 数据库，并刷新页面
+todo_index.html: 接收一般请求，输入框中的 todo
 
-修改：一个网页，点进去之后可以修改 todo，会更新数据库，并返回 todo 主页面
+todo_edit.html: 接收一般请求，和输入框中的 todo 内容和 todo_id
 
-删除：直接从数据库中删除 todo，并刷新页面
-
-数据库中 todo 所需字段：username - 表明当前 todo 属于哪个用户；id - todo 的唯一标识；title - todo 的内容
-————————————————————————————————————————
-第一层级
-
-一个 WSGI 接口：接收 request 信息，和
+已经解决 Control 部分，发送的请求可以被解析

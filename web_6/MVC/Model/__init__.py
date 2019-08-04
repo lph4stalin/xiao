@@ -1,5 +1,5 @@
 """
-__init__.py 在
+对数据库进行增删改查
 """
 import json
 
@@ -77,13 +77,24 @@ class Model(object):
         """
         save 函数用于把一个 Model 的实例保存到文件中
         """
+        # models 是把当前类名的文件的内容全部读取
         models = self.all()
         # __dict__ 是包含了对象所有属性和值的字典
         l = self.__dict__
+        # 把当前对象的所有属性添加到所有的 model 对象的数据中，然后保存
         models.append(l)
         path = self.db_path()
         # 所有擦除，所有重写
         save(models, path)
+
+
+    def find_by(self):
+        pass
+
+
+    def find(self):
+        pass
+
 
     # def __repr__(self):
     #     """
@@ -108,12 +119,14 @@ class Model(object):
 # 所以可以直接 save load
 
 
+
 class User(Model):
     def __init__(self, form):
         # form 是个字典
         self.username = form.get('username', '')
         self.password = form.get('password', '')
         self.note = form.get('note', '')
+        self.session = ''
 
     def validate_login(self):
         """
@@ -159,3 +172,9 @@ class Todo(Model):
         self.username = cookie.split('username=')[1]
         self.title = form.get('title', '')
         self.id = 1
+
+
+class Cookie(Model):
+    def __init__(self):
+        self.username = ''
+        self.session_id = ''

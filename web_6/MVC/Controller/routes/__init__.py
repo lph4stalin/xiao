@@ -12,7 +12,6 @@ from .routes_message import *
 from .routes_register import *
 from .routes_profile import *
 from .routes_todo import *
-from .session import *
 from .utils import *
 
 
