@@ -99,4 +99,63 @@ print(c.__dict__)
 ④比如print 类的实例，出来的内容就是 __repr__ 自定义后的。
 ⑤本课是在str()强制转换是触发 __repr__ 方法，输出自定义的字符串
 
+__repr__ 方法定义后，在调用对应函数会输出格式化字符串
+__str__ 方法定义后，在调用print()会输出格式化字符串
+例子：
+未定义__str__()函数的情况
+>>> class Person(object):
+...     def __init__(self, name, gender):
+...         self.name = name
+...         self.gender = gender
+...
+>>> p=Person('Bob','male')
+>>> p
+<__main__.Person object at 0x108210490>
+>>> print p
+<__main__.Person object at 0x108210490>
+
+定义__str__()函数，但是未定义__repr__()的情况：
+>>> class Person(object):
+...     def __init__(self, name, gender):
+...         self.name = name
+...         self.gender = gender
+...     def __str__(self):
+...         return '(Person: %s, %s)' % (self.name, self.gender)
+...
+>>> p = Person('Bob','male')
+>>> p
+<__main__.Person object at 0x1081a5e90>
+>>> print p
+(Person: Bob, male)
+同时定义__str__和__repr__的情况：
+>>> class Person(object):
+...     def __init__(self, name, gender):
+...         self.name = name
+...         self.gender = gender
+...     def __str__(self):
+...         return '(Person: %s, %s)' % (self.name, self.gender)
+...     __repr__=__str__
+...
+>>> p = Person('Bob','male')
+>>> p
+(Person: Bob, male)
+>>> print p
+(Person: Bob, male)
+>>>
+分别定义__str__和__repr__的情况：
+>>> class Person(object):
+...     def __init__(self, name, gender):
+...         self.name = name
+...         self.gender = gender
+...     def __str__(self):
+...         return '(Person: %s, %s)' % (self.name, self.gender)
+...     def __repr__(self):
+...        return 'xxxx'
+...
+>>> p=Person('Bob','male')
+>>> p
+xxxx
+>>> print p
+(Person: Bob, male)
+>>>
 """
